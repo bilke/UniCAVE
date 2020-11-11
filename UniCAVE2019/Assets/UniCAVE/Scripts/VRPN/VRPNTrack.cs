@@ -38,6 +38,9 @@ namespace UniCAVE
 
         //handles left coordinate system from right based tracking system such as ART.
         public bool convertToLeft = false;
+        
+        // Converts Vive tracker data
+        public bool viveTracker = false;
 
         public int Channel
         {
@@ -119,14 +122,18 @@ namespace UniCAVE
                     pos.y *= -1;
                     transform.localPosition = pos;
                 }
+                else if (viveTracker)
+                {
+                    Vector3 vivePos;
+                    vivePos.x = pos.z;
+                    vivePos.y = pos.x;
+                    vivePos.z = pos.y;
+                    transform.localPosition = vivePos;
+                }
                 else
                 {
                     transform.localPosition = pos;
                 }
-                //float temp = pos.z;
-                //pos.z = pos.x;
-                //pos.x = temp;
-                // pos.y = -pos.y;
 
                 yield return null;
             }
@@ -144,6 +151,15 @@ namespace UniCAVE
                     rotation.y *= -1;
 
                     transform.localRotation = rotation * Quaternion.Euler(trackerRotationOffset);
+                }
+                else if (viveTracker)
+                {
+                    Quaternion viveQuat;
+                    viveQuat.x = rotation.z;
+                    viveQuat.y = rotation.x;
+                    viveQuat.z = rotation.y;
+                    viveQuat.w = rotation.w;
+                    transform.localRotation = viveQuat * Quaternion.Euler(trackerRotationOffset);
                 }
                 else
                 {
